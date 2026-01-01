@@ -14,6 +14,12 @@ const ceratePostIntoDb = async (
 	return result
 }
 
+const getAllPostFromDb = () => {
+	const result = prisma.post.findMany()
+	return result
+}
+
 export const PostService = {
-	ceratePostIntoDb
+	ceratePostIntoDb,
+	getAllPostFromDb
 }
