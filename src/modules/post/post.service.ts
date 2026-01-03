@@ -14,8 +14,30 @@ const ceratePostIntoDb = async (
 	return result
 }
 
-const getAllPostFromDb = () => {
-	const result = prisma.post.findMany()
+const getAllPostFromDb = (payload: { search?: string }) => {
+	const result = prisma.post.findMany({
+		where: {
+			OR: [
+				{
+					title: {
+						contains: payload.search as string,
+						mode: 'insensitive'
+					}
+				},
+				{
+					content: {
+						contains: payload.search as string,
+						mode: 'insensitive'
+					}
+				},
+				{
+					tags: {
+						has: payload.search as string
+					}
+				}
+			]
+		}
+	})
 	return result
 }
 

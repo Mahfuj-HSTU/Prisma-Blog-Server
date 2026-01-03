@@ -15,7 +15,10 @@ const createPost = async (req: Request, res: Response) => {
 
 const getAllPost = async (req: Request, res: Response) => {
 	try {
-		const result = await PostService.getAllPostFromDb()
+		const { search } = req.query
+		const result = await PostService.getAllPostFromDb({
+			search: search as string
+		})
 		res.status(200).json({
 			success: true,
 			message: 'Post fetched successfully',
