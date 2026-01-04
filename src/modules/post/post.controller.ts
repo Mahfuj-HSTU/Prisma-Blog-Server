@@ -16,7 +16,8 @@ const createPost = async (req: Request, res: Response) => {
 
 const getAllPost = async (req: Request, res: Response) => {
 	try {
-		const { search, tags, status, authorId } = req.query
+		const { search, tags, status, authorId, page, limit, sortBy, sortOrder } =
+			req.query
 		const tagsArray = tags ? (tags as string)?.split(',') : []
 
 		// only should to except true or false
@@ -33,7 +34,11 @@ const getAllPost = async (req: Request, res: Response) => {
 			tags: tagsArray,
 			isFeatured: isFeatured as boolean,
 			status: status as PostStatus,
-			authorId: authorId as string
+			authorId: authorId as string,
+			page: Number(page),
+			limit: Number(limit),
+			sortBy: sortBy as string,
+			sortOrder: sortOrder as string
 		})
 		res.status(200).json({
 			success: true,
