@@ -1,4 +1,5 @@
 import type { Post } from '../../../generated/prisma/client'
+import type { PostWhereInput } from '../../../generated/prisma/models'
 import { prisma } from '../../lib/prisma'
 
 const ceratePostIntoDb = async (
@@ -14,28 +15,42 @@ const ceratePostIntoDb = async (
 	return result
 }
 
-const getAllPostFromDb = (payload: { search?: string }) => {
-	const result = prisma.post.findMany({
-		where: {
+const getAllPostFromDb = (payload: { search?: string; tags: string[] }) => {
+	const { search, tags } = payload
+	const andConditions: PostWhereInput[] = []
+	if (search) {
+		andConditions.push({
 			OR: [
 				{
 					title: {
-						contains: payload.search as string,
+						contains: search as string,
 						mode: 'insensitive'
 					}
 				},
 				{
 					content: {
-						contains: payload.search as string,
+						contains: search as string,
 						mode: 'insensitive'
 					}
 				},
 				{
 					tags: {
-						has: payload.search as string
+						has: search as string
 					}
 				}
 			]
+		})
+	}
+	if (tags.length > 0) {
+		andConditions.push({
+			tags: {
+				hasEvery: tags
+			}
+		})
+	}
+	const result = prisma.post.findMany({
+		where: {
+			AND: andConditions
 		}
 	})
 	return result

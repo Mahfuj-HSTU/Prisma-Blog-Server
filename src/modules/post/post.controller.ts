@@ -15,9 +15,11 @@ const createPost = async (req: Request, res: Response) => {
 
 const getAllPost = async (req: Request, res: Response) => {
 	try {
-		const { search } = req.query
+		const { search, tags } = req.query
+		const tagsArray = tags ? (tags as string)?.split(',') : []
 		const result = await PostService.getAllPostFromDb({
-			search: search as string
+			search: search as string,
+			tags: tagsArray
 		})
 		res.status(200).json({
 			success: true,
