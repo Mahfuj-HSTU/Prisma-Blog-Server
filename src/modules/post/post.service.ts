@@ -15,8 +15,12 @@ const ceratePostIntoDb = async (
 	return result
 }
 
-const getAllPostFromDb = (payload: { search?: string; tags: string[] }) => {
-	const { search, tags } = payload
+const getAllPostFromDb = (payload: {
+	search?: string
+	tags: string[]
+	isFeatured: boolean
+}) => {
+	const { search, tags, isFeatured } = payload
 	const andConditions: PostWhereInput[] = []
 	if (search) {
 		andConditions.push({
@@ -46,6 +50,11 @@ const getAllPostFromDb = (payload: { search?: string; tags: string[] }) => {
 			tags: {
 				hasEvery: tags
 			}
+		})
+	}
+	if (typeof isFeatured === 'boolean') {
+		andConditions.push({
+			isFeatured
 		})
 	}
 	const result = prisma.post.findMany({
