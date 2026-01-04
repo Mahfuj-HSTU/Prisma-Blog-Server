@@ -21,8 +21,9 @@ const getAllPostFromDb = (payload: {
 	tags: string[]
 	isFeatured: boolean
 	status?: PostStatus
+	authorId?: string
 }) => {
-	const { search, tags, isFeatured, status } = payload
+	const { search, tags, isFeatured, status, authorId } = payload
 	const andConditions: PostWhereInput[] = []
 	if (search) {
 		andConditions.push({
@@ -62,6 +63,11 @@ const getAllPostFromDb = (payload: {
 	if (status) {
 		andConditions.push({
 			status
+		})
+	}
+	if (authorId) {
+		andConditions.push({
+			authorId
 		})
 	}
 	const result = prisma.post.findMany({
