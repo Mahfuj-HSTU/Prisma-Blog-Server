@@ -1,6 +1,7 @@
 import type { Post } from '../../../generated/prisma/client'
 import type { PostWhereInput } from '../../../generated/prisma/models'
 import { prisma } from '../../lib/prisma'
+import { PostStatus } from '../../../generated/prisma/enums'
 
 const ceratePostIntoDb = async (
 	data: Omit<Post, 'id' | 'createdAt' | 'updatedAt' | 'authorId'>,
@@ -19,8 +20,9 @@ const getAllPostFromDb = (payload: {
 	search?: string
 	tags: string[]
 	isFeatured: boolean
+	status?: PostStatus
 }) => {
-	const { search, tags, isFeatured } = payload
+	const { search, tags, isFeatured, status } = payload
 	const andConditions: PostWhereInput[] = []
 	if (search) {
 		andConditions.push({
@@ -55,6 +57,11 @@ const getAllPostFromDb = (payload: {
 	if (typeof isFeatured === 'boolean') {
 		andConditions.push({
 			isFeatured
+		})
+	}
+	if (status) {
+		andConditions.push({
+			status
 		})
 	}
 	const result = prisma.post.findMany({

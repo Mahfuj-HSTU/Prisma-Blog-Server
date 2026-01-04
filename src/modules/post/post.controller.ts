@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express'
 import { PostService } from './post.service'
+import type { PostStatus } from '../../../generated/prisma/enums'
 
 const createPost = async (req: Request, res: Response) => {
 	try {
@@ -15,7 +16,7 @@ const createPost = async (req: Request, res: Response) => {
 
 const getAllPost = async (req: Request, res: Response) => {
 	try {
-		const { search, tags } = req.query
+		const { search, tags, status } = req.query
 		const tagsArray = tags ? (tags as string)?.split(',') : []
 
 		// only should to except true or false
@@ -30,7 +31,8 @@ const getAllPost = async (req: Request, res: Response) => {
 		const result = await PostService.getAllPostFromDb({
 			search: search as string,
 			tags: tagsArray,
-			isFeatured: isFeatured as boolean
+			isFeatured: isFeatured as boolean,
+			status: status as PostStatus
 		})
 		res.status(200).json({
 			success: true,
