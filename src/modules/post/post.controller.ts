@@ -43,6 +43,7 @@ const getAllPost = async (req: Request, res: Response) => {
 			isFeatured: isFeatured as boolean,
 			status: status as PostStatus,
 			authorId: authorId as string,
+			page: Number(page),
 			...options
 			// skip: options.skip,
 			// limit: options.limit,

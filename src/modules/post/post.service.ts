@@ -16,16 +16,17 @@ const ceratePostIntoDb = async (
 	return result
 }
 
-const getAllPostFromDb = (payload: {
+const getAllPostFromDb = async (payload: {
 	search?: string
 	tags: string[]
 	isFeatured: boolean
 	status?: PostStatus
 	authorId?: string
+	page?: number | string
 	skip: number
 	limit: number
-	sortBy?: string
-	sortOrder?: string
+	sortBy: string
+	sortOrder: string
 }) => {
 	const {
 		search,
@@ -33,6 +34,7 @@ const getAllPostFromDb = (payload: {
 		isFeatured,
 		status,
 		authorId,
+		page,
 		skip,
 		limit,
 		sortBy,
@@ -84,22 +86,30 @@ const getAllPostFromDb = (payload: {
 			authorId
 		})
 	}
-	const result = prisma.post.findMany({
+	const result = await prisma.post.findMany({
 		take: limit,
-		skip: skip,
+		skip,
 		where: {
 			AND: andConditions
 		},
-		orderBy:
-			sortBy && sortOrder
-				? {
-						[sortBy]: sortOrder
-				  }
-				: {
-						createdAt: 'desc'
-				  }
+		orderBy: {
+			[sortBy]: sortOrder
+		}
 	})
-	return result
+	const total = await prisma.post.count({
+		where: {
+			AND: andConditions
+		}
+	})
+	return {
+		data: result,
+		pagination: {
+			total,
+			page,
+			limit,
+			totalPage: Math.ceil(total / limit)
+		}
+	}
 }
 
 export const PostService = {
