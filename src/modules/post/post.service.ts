@@ -22,8 +22,8 @@ const getAllPostFromDb = (payload: {
 	isFeatured: boolean
 	status?: PostStatus
 	authorId?: string
-	page?: number
-	limit?: number
+	skip: number
+	limit: number
 	sortBy?: string
 	sortOrder?: string
 }) => {
@@ -33,14 +33,12 @@ const getAllPostFromDb = (payload: {
 		isFeatured,
 		status,
 		authorId,
-		page,
+		skip,
 		limit,
 		sortBy,
 		sortOrder
 	} = payload
 	const andConditions: PostWhereInput[] = []
-	const skip = ((page ? Number(page) : 1) - 1) * (limit ? Number(limit) : 5)
-	const take = limit ? Number(limit) : 5
 	if (search) {
 		andConditions.push({
 			OR: [
@@ -87,7 +85,7 @@ const getAllPostFromDb = (payload: {
 		})
 	}
 	const result = prisma.post.findMany({
-		take: take,
+		take: limit,
 		skip: skip,
 		where: {
 			AND: andConditions
