@@ -1,7 +1,7 @@
 import type { Post } from '../../../generated/prisma/client'
 import type { PostWhereInput } from '../../../generated/prisma/models'
 import { prisma } from '../../lib/prisma'
-import { PostStatus } from '../../../generated/prisma/enums'
+import { CommentStatus, PostStatus } from '../../../generated/prisma/enums'
 
 const ceratePostIntoDb = async (
 	data: Omit<Post, 'id' | 'createdAt' | 'updatedAt' | 'authorId'>,
@@ -127,6 +127,24 @@ const getPostByIdFromDb = async (id: string) => {
 		const postData = await txt.post.findUnique({
 			where: {
 				id
+			},
+			include: {
+				comments: {
+					where: {
+						parentId: null,
+						status: CommentStatus.PUBLISHED
+					},
+					include: {
+						replies: {
+							where: {
+								status: CommentStatus.PUBLISHED
+							},
+							include: {
+								replies: true
+							}
+						}
+					}
+				}
 			}
 		})
 		return postData
