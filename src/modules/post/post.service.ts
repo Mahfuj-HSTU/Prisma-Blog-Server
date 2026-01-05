@@ -112,7 +112,17 @@ const getAllPostFromDb = async (payload: {
 	}
 }
 
+const getPostByIdFromDb = async (id: string) => {
+	const result = await prisma.post.findUnique({
+		where: {
+			id
+		}
+	})
+	return result
+}
+
 export const PostService = {
 	ceratePostIntoDb,
-	getAllPostFromDb
+	getAllPostFromDb,
+	getPostByIdFromDb
 }
