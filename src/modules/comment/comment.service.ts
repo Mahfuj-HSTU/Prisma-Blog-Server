@@ -111,10 +111,35 @@ const updateCommentIntoDb = async (
 	return result
 }
 
+const moderateCommentStatusIntoDb = async (
+	commentId: string,
+	payload: {
+		status?: CommentStatus
+	},
+	authorId: string
+) => {
+	const commentData = await prisma.comment.findUniqueOrThrow({
+		where: {
+			id: commentId
+		}
+	})
+	if (!commentData) {
+		return 'Comment not found'
+	}
+	const result = await prisma.comment.update({
+		where: {
+			id: commentId
+		},
+		data: payload
+	})
+	return result
+}
+
 export const CommentService = {
 	createCommentIntoDb,
 	getCommentByIdFromDb,
 	getCommentsByAuthorIdFromDb,
 	deleteCommentFromDb,
-	updateCommentIntoDb
+	updateCommentIntoDb,
+	moderateCommentStatusIntoDb
 }

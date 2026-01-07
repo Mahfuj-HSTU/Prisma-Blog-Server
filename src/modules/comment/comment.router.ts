@@ -25,6 +25,12 @@ router
 		CommentController.updateComment
 	)
 
+router.patch(
+	'/:commentId/moderate',
+	verifyAuth(UserRole.ADMIN),
+	CommentController.moderateComment
+)
+
 router.get(
 	'/author/:authorId',
 	verifyAuth(UserRole.USER, UserRole.ADMIN),

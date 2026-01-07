@@ -80,10 +80,28 @@ const updateComment = async (req: Request, res: Response) => {
 	}
 }
 
+const moderateComment = async (req: Request, res: Response) => {
+	try {
+		if (!req.user) {
+			return res.status(401).json({ error: 'Unauthorized' })
+		}
+		const { commentId } = req.params
+		const result = await CommentService.moderateCommentStatusIntoDb(
+			commentId as string,
+			req.body,
+			req.user.id as string
+		)
+		res.status(200).json(result)
+	} catch (error) {
+		res.status(500).json({ error: 'Internal Server Error', details: error })
+	}
+}
+
 export const CommentController = {
 	createComment,
 	getCommentById,
 	getCommentsByAuthor,
 	deleteComment,
-	updateComment
+	updateComment,
+	moderateComment
 }
