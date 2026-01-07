@@ -1,3 +1,4 @@
+import type { CommentStatus } from '../../../generated/prisma/enums'
 import { prisma } from '../../lib/prisma'
 
 const createCommentIntoDb = async (payload: {
@@ -69,7 +70,6 @@ const deleteCommentFromDb = async (commentId: string, userId: string) => {
 			authorId: userId
 		}
 	})
-	console.log({ commentData })
 	if (!commentData) {
 		return 'Comment not found'
 	}
@@ -84,9 +84,37 @@ const deleteCommentFromDb = async (commentId: string, userId: string) => {
 	return result
 }
 
+const updateCommentIntoDb = async (
+	commentId: string,
+	payload: {
+		content?: string
+		status?: CommentStatus
+	},
+	authorId: string
+) => {
+	const commentData = await prisma.comment.findUnique({
+		where: {
+			id: commentId,
+			authorId
+		}
+	})
+	if (!commentData) {
+		return 'Comment not found'
+	}
+	const result = await prisma.comment.update({
+		where: {
+			id: commentId,
+			authorId
+		},
+		data: payload
+	})
+	return result
+}
+
 export const CommentService = {
 	createCommentIntoDb,
 	getCommentByIdFromDb,
 	getCommentsByAuthorIdFromDb,
-	deleteCommentFromDb
+	deleteCommentFromDb,
+	updateCommentIntoDb
 }
