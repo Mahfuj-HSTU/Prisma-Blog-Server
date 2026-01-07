@@ -25,6 +25,68 @@ const createCommentIntoDb = async (payload: {
 	return result
 }
 
+const getCommentByIdFromDb = async (id: string) => {
+	return await prisma.comment.findUniqueOrThrow({
+		where: {
+			id
+		},
+		include: {
+			replies: true,
+			post: {
+				select: {
+					id: true,
+					title: true
+				}
+			}
+		}
+	})
+}
+
+const getCommentsByAuthorIdFromDb = async (authorId: string) => {
+	return await prisma.comment.findMany({
+		where: {
+			authorId
+		},
+		orderBy: {
+			createdAt: 'desc'
+		},
+		include: {
+			replies: true,
+			post: {
+				select: {
+					id: true,
+					title: true
+				}
+			}
+		}
+	})
+}
+
+const deleteCommentFromDb = async (commentId: string, userId: string) => {
+	const commentData = await prisma.comment.findUnique({
+		where: {
+			id: commentId,
+			authorId: userId
+		}
+	})
+	console.log({ commentData })
+	if (!commentData) {
+		return 'Comment not found'
+	}
+	if (commentData.authorId !== userId) {
+		return 'Unauthorized'
+	}
+	const result = await prisma.comment.delete({
+		where: {
+			id: commentId
+		}
+	})
+	return result
+}
+
 export const CommentService = {
-	createCommentIntoDb
+	createCommentIntoDb,
+	getCommentByIdFromDb,
+	getCommentsByAuthorIdFromDb,
+	deleteCommentFromDb
 }
