@@ -76,7 +76,6 @@ const getPostById = async (req: Request, res: Response) => {
 
 const getPostByUserId = async (req: Request, res: Response) => {
 	try {
-		console.log({ req })
 		if (!req.user) {
 			return res.status(401).json({ error: 'Unauthorized' })
 		}

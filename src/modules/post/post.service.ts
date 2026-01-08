@@ -176,6 +176,20 @@ const getPostByIdFromDb = async (id: string) => {
 }
 
 const getPostByUserIdFromDb = async (userId: string) => {
+	const userInfo = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: userId,
+			status: 'ACTIVE'
+		},
+		select: {
+			id: true
+		}
+	})
+
+	if (!userInfo) {
+		return 'User not found'
+	}
+
 	const result = await prisma.post.findMany({
 		where: {
 			authorId: userId
