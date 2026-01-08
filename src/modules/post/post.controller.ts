@@ -74,8 +74,27 @@ const getPostById = async (req: Request, res: Response) => {
 	}
 }
 
+const getPostByUserId = async (req: Request, res: Response) => {
+	try {
+		console.log({ req })
+		if (!req.user) {
+			return res.status(401).json({ error: 'Unauthorized' })
+		}
+		const { id } = req.user
+		const result = await PostService.getPostByUserIdFromDb(id as string)
+		res.status(200).json({
+			success: true,
+			message: 'Post retrieved successfully',
+			result
+		})
+	} catch (error) {
+		res.status(500).json({ error: 'Internal Server Error', details: error })
+	}
+}
+
 export const PostController = {
 	createPost,
 	getAllPost,
-	getPostById
+	getPostById,
+	getPostByUserId
 }

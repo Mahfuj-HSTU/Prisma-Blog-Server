@@ -175,8 +175,52 @@ const getPostByIdFromDb = async (id: string) => {
 	return result
 }
 
+const getPostByUserIdFromDb = async (userId: string) => {
+	const result = await prisma.post.findMany({
+		where: {
+			authorId: userId
+		},
+		orderBy: {
+			createdAt: 'desc'
+		},
+		include: {
+			_count: {
+				select: {
+					comments: true
+				}
+			}
+		}
+	})
+	// const total = await prisma.post.count({
+	// 	where: {
+	// 		authorId: userId
+	// 	}
+	// })
+	// return {
+	// 	data: result,
+	// 	pagination: {
+	// 		total,
+	// 		page: 1,
+	// 		limit: 10,
+	// 		totalPage: Math.ceil(total / 10)
+	// 	}
+	// }
+
+	const total = await prisma.post.aggregate({
+		where: {
+			authorId: userId
+		},
+		_count: {
+			authorId: true
+		}
+	})
+
+	return { data: result, total: total._count.authorId }
+}
+
 export const PostService = {
 	ceratePostIntoDb,
 	getAllPostFromDb,
-	getPostByIdFromDb
+	getPostByIdFromDb,
+	getPostByUserIdFromDb
 }

@@ -126,6 +126,11 @@ const moderateCommentStatusIntoDb = async (
 	if (!commentData) {
 		return 'Comment not found'
 	}
+
+	if (commentData.status === payload.status) {
+		return `Your comment is already ${payload.status}`
+	}
+
 	const result = await prisma.comment.update({
 		where: {
 			id: commentId
