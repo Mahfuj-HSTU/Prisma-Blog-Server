@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 import { PostService } from './post.service'
 import type { PostStatus } from '../../../generated/prisma/enums'
 import { paginationSortingHelper } from '../../helper/paginationSortingHelper'
+import { UserRole } from '../../middlewares/auth'
 
 const createPost = async (req: Request, res: Response) => {
 	try {
@@ -97,10 +98,12 @@ const updatePost = async (req: Request, res: Response) => {
 			return res.status(401).json({ error: 'Unauthorized' })
 		}
 		const { postId } = req.params
+		const isAdmin = req.user.role === UserRole.ADMIN
 		const result = await PostService.updatePostIntoDb(
 			postId as string,
 			req.body,
-			req.user.id
+			req.user.id,
+			isAdmin
 		)
 		res.status(200).json({
 			success: true,
