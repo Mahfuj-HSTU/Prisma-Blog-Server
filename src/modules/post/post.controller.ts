@@ -91,9 +91,33 @@ const getPostByUserId = async (req: Request, res: Response) => {
 	}
 }
 
+const updatePost = async (req: Request, res: Response) => {
+	try {
+		if (!req.user) {
+			return res.status(401).json({ error: 'Unauthorized' })
+		}
+		const { postId } = req.params
+		const result = await PostService.updatePostIntoDb(
+			postId as string,
+			req.body,
+			req.user.id
+		)
+		res.status(200).json({
+			success: true,
+			message: 'Post updated successfully',
+			result
+		})
+	} catch (error: any) {
+		res.status(500).json({
+			error: error.message || 'Internal Server Error'
+		})
+	}
+}
+
 export const PostController = {
 	createPost,
 	getAllPost,
 	getPostById,
-	getPostByUserId
+	getPostByUserId,
+	updatePost
 }

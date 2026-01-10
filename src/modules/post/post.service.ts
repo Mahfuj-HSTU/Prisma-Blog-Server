@@ -232,9 +232,39 @@ const getPostByUserIdFromDb = async (userId: string) => {
 	return { data: result, total: total._count.authorId }
 }
 
+const updatePostIntoDb = async (
+	postId: string,
+	data: Partial<Post>,
+	authorId: string
+) => {
+	const postData = await prisma.post.findUniqueOrThrow({
+		where: {
+			id: postId
+		},
+		select: {
+			id: true,
+			authorId: true
+		}
+	})
+
+	if (postData.authorId !== authorId) {
+		throw new Error('You are not authorized to update this post')
+	}
+
+	const result = await prisma.post.update({
+		where: {
+			id: postData.id
+		},
+		data
+	})
+
+	return result
+}
+
 export const PostService = {
 	ceratePostIntoDb,
 	getAllPostFromDb,
 	getPostByIdFromDb,
-	getPostByUserIdFromDb
+	getPostByUserIdFromDb,
+	updatePostIntoDb
 }

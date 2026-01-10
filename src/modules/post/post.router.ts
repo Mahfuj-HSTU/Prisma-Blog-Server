@@ -8,5 +8,10 @@ router
 	.get('/', PostController.getAllPost)
 	.get('/my-posts', verifyAuth(UserRole.USER), PostController.getPostByUserId)
 	.get('/:id', PostController.getPostById)
+	.patch(
+		'/:postId',
+		verifyAuth(UserRole.USER, UserRole.ADMIN),
+		PostController.updatePost
+	)
 
 export const postRouter = router
