@@ -267,11 +267,39 @@ const updatePostIntoDb = async (
 }
 
 // * user can delete only his post, admin can delete any post
+const deletePostFromDb = async (
+	postId: string,
+	authorId: string,
+	isAdmin: boolean
+) => {
+	const postData = await prisma.post.findUniqueOrThrow({
+		where: {
+			id: postId
+		},
+		select: {
+			id: true,
+			authorId: true
+		}
+	})
+
+	if (postData.authorId !== authorId && !isAdmin) {
+		throw new Error('You are not authorized to delete this post')
+	}
+
+	const result = await prisma.post.delete({
+		where: {
+			id: postData.id
+		}
+	})
+
+	return result
+}
 
 export const PostService = {
 	ceratePostIntoDb,
 	getAllPostFromDb,
 	getPostByIdFromDb,
 	getPostByUserIdFromDb,
-	updatePostIntoDb
+	updatePostIntoDb,
+	deletePostFromDb
 }

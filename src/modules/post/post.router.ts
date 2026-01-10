@@ -13,5 +13,10 @@ router
 		verifyAuth(UserRole.USER, UserRole.ADMIN),
 		PostController.updatePost
 	)
+	.delete(
+		'/:postId',
+		verifyAuth(UserRole.USER, UserRole.ADMIN),
+		PostController.deletePost
+	)
 
 export const postRouter = router
