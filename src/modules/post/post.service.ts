@@ -232,6 +232,7 @@ const getPostByUserIdFromDb = async (userId: string) => {
 	return { data: result, total: total._count.authorId }
 }
 
+// * user can update only his post and featured can't update, admin can update any post
 const updatePostIntoDb = async (
 	postId: string,
 	data: Partial<Post>,
@@ -264,6 +265,8 @@ const updatePostIntoDb = async (
 
 	return result
 }
+
+// * user can delete only his post, admin can delete any post
 
 export const PostService = {
 	ceratePostIntoDb,
