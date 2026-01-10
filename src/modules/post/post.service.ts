@@ -295,11 +295,43 @@ const deletePostFromDb = async (
 	return result
 }
 
+const getStats = async () => {
+	return await prisma.$transaction(async (txt) => {
+		const totalPost = await txt.post.count()
+		const PublishedPost = await txt.post.count({
+			where: {
+				status: PostStatus.PUBLISHED
+			}
+		})
+		const draftPost = await txt.post.count({
+			where: {
+				status: PostStatus.DRAFT
+			}
+		})
+		const archivedPost = await txt.post.count({
+			where: {
+				status: PostStatus.ARCHIVED
+			}
+		})
+		const totalUser = await txt.user.count()
+		const totalComment = await txt.comment.count()
+		return {
+			totalPost,
+			totalUser,
+			totalComment,
+			PublishedPost,
+			draftPost,
+			archivedPost
+		}
+	})
+}
+
 export const PostService = {
 	ceratePostIntoDb,
 	getAllPostFromDb,
 	getPostByIdFromDb,
 	getPostByUserIdFromDb,
 	updatePostIntoDb,
-	deletePostFromDb
+	deletePostFromDb,
+	getStats
 }

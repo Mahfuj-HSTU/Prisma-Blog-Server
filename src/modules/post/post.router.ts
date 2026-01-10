@@ -4,8 +4,9 @@ import { UserRole, verifyAuth } from '../../middlewares/auth'
 const router = express.Router()
 
 router
-	.post('/', verifyAuth(UserRole.USER), PostController.createPost)
 	.get('/', PostController.getAllPost)
+	.get('/stats', verifyAuth(UserRole.ADMIN), PostController.getStats)
+	.post('/', verifyAuth(UserRole.USER), PostController.createPost)
 	.get('/my-posts', verifyAuth(UserRole.USER), PostController.getPostByUserId)
 	.get('/:id', PostController.getPostById)
 	.patch(

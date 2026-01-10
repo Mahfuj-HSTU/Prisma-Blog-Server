@@ -141,11 +141,27 @@ const deletePost = async (req: Request, res: Response) => {
 	}
 }
 
+const getStats = async (req: Request, res: Response) => {
+	try {
+		const result = await PostService.getStats()
+		res.status(200).json({
+			success: true,
+			message: 'Stats retrieved successfully',
+			result
+		})
+	} catch (error: any) {
+		res.status(500).json({
+			error: error.message || 'Internal Server Error'
+		})
+	}
+}
+
 export const PostController = {
 	createPost,
 	getAllPost,
 	getPostById,
 	getPostByUserId,
 	updatePost,
-	deletePost
+	deletePost,
+	getStats
 }
