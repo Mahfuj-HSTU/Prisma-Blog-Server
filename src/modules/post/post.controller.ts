@@ -92,7 +92,7 @@ const getPostByUserId = async (req: Request, res: Response) => {
   }
 }
 
-const updatePost = async (req: Request, res: Response) => {
+const updatePost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: 'Unauthorized' })
@@ -111,9 +111,7 @@ const updatePost = async (req: Request, res: Response) => {
       result
     })
   } catch (error: any) {
-    res.status(500).json({
-      error: error.message || 'Internal Server Error'
-    })
+    next(error)
   }
 }
 
