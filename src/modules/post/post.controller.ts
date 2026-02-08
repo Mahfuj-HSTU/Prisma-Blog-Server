@@ -10,7 +10,12 @@ const createPost = async (req: Request, res: Response, next: NextFunction) => {
 			return res.status(401).json({ error: 'Unauthorized' })
 		}
 		const result = await PostService.ceratePostIntoDb(req.body, req.user.id)
-		res.status(201).json(result)
+		console.log({ result })
+		res.status(201).json({
+			success: true,
+			message: 'Post created successfully',
+			result
+		})
 	} catch (error) {
 		next(error)
 	}

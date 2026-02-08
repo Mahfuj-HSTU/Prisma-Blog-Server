@@ -22,10 +22,12 @@ declare global {
 
 export const verifyAuth = (...roles: UserRole[]) => {
 	return async (req: Request, res: Response, next: NextFunction) => {
+		console.log({ req })
 		try {
 			const session = await betterAuth.api.getSession({
 				headers: req.headers as any
 			})
+			console.log(session)
 			if (!session?.user) {
 				return res.status(401).json({ message: 'Unauthorized' })
 			}
